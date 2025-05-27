@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Envelope Letter Animation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background: #fff4eb;
+      font-family: 'Courier New', monospace;
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      position: relative;
+      width: 90vw;
+      max-width: 400px;
+      text-align: center;
+      perspective: 800px; /* for 3D flap rotation */
+      cursor: pointer;
+    }
+
+    .envelope {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      background: #c0392b;
+      border-radius: 12px;
+      z-index: 2;
+      transition: transform 1s ease;
+    }
+
+    .envelope.open {
+      transform: translateY(120px);
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: #e74c3c;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top center;
+      transition: transform 1s ease;
+      z-index: 5;
+      backface-visibility: hidden;
+    }
+
+    .envelope.open .flap {
+      transform: rotateX(180deg);
+    }
+
+    .letter {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      max-width: 400px;
+      background: #fff;
+      padding: 20px 25px;
+      border-radius: 10px;
+      font-family: 'Homemade Apple', cursive;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 10;
+      white-space: pre-wrap;
+      user-select: text;
+      pointer-events: none; /* so clicks go to envelope */
+      /* Initially empty and invisible */
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      min-height: 150px;
+    }
+
+    .letter.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    audio {
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .letter {
+        font-size: 1rem;
+        padding: 1rem;
+        min-height: 130px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="container">
+    <div class="envelope" id="envelope">
+      <div class="flap"></div>
+    </div>
+    <div class="letter" id="letter"></div>
+  </div>
+
+  <audio id="bgMusic" src="Heaven By Your Side.mp3" preload="auto"></audio>
+
+  <script>
+    const envelope = document.getElementById('envelope');
+    const letter = document.getElementById('letter');
+    const music = document.getElementById('bgMusic');
+    const container = document.getElementById('container');
+
+    const letterText = `Hi Babi ko,
+
+First of all i want to say happy 10 Mothsary saatin babi ko,
+i know i made a lot of mistakes from keeping things from you
+especially everytime i feel jealous and everytime i overthink a lot,
+i know mali yung ginawa ko and sometimes because of them kaya ko nagagawa
+na magtampo sayo agad and sometimes i forgot to understand you
+and your feelings,Sorry po if minsan i didnt enjoy playing because of selos po
+and sorry i easily get jealous that leads to overthinking i just hope babi ko
+na mag karoon ka pa ng more patience with me and thank you for always understandong me.
+
+Anyway always remember that you are important to me po and
+always keep yourself healthy okay?, and always remember to take a rest
+wag masyadfo pagorin ang sarili, wish ko lng na sana
+whatever happens to the future we still face them together
+and i know na we are still young and masyado pa po maaga para
+ma sabi natin na sure na yung mangyayari in the future pero one thing i hope
+is sana we are still on the same page of the book habang natutupad natin yung mga dreams ng bawat isa
+
+Again happy happy 10 monthsary babi ko, this is just one of the simple surprise
+that iam willing to do just for you,i hope we both enjoy this day and
+sana magustuhan mo po ito na ginawa ko for you, i love you so much and always babi ko
+mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua mwua
+
+Thank you for being you.
+
+Forever grateful,
+— Jam(Babe mo)`;
+
+    // Typing animation function
+    function typeLetter(text, element, delay = 50) {
+      element.textContent = '';
+      let index = 0;
+      element.classList.add('visible');
+      const timer = setInterval(() => {
+        element.textContent += text.charAt(index);
+        index++;
+        if (index === text.length) clearInterval(timer);
+      }, delay);
+    }
+
+    // To prevent multiple clicks/animations
+    let opened = false;
+
+    container.addEventListener('click', () => {
+      if (opened) return; // only open once
+      opened = true;
+
+      envelope.classList.add('open');
+
+      // Delay typing so flap starts rotating first
+      setTimeout(() => {
+        typeLetter(letterText, letter, 60);
+      }, 1000);
+
+      music.play().catch(() => {
+        console.log('Music play was blocked by browser.');
+      });
+    });
+  </script>
+
+</body>
+</html>
